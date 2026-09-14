@@ -1,0 +1,135 @@
+@startuml Diagrama_de_Classes
+skinparam classAttributeIconSize 0
+hide circle
+title Sistema de Aluguel de Carros - Diagrama de Classes
+
+abstract class Usuario {
+  - id: int
+  - email: String
+  - senha: String
+  + autenticar(): boolean
+  + cadastrar(): void
+}
+class Cliente {
+  - rg: String
+  - cpf: String
+  - nome: String
+  - profissao: String
+  + criarPedido(): Pedido
+  + alterarPedido(p: Pedido): void
+  + consultarPedido(): Pedido
+  + cancelarPedido(p: Pedido): void
+  + decidirPedido(p: Pedido, aceita: boolean): void
+}
+abstract class Agente {
+  + avaliarPedido(p: Pedido): Parecer
+}
+class Empresa {
+  - cnpj: String
+  - razaoSocial: String
+}
+class Banco {
+  - codigo: String
+  - nome: String
+  + concederCredito(l: Leasing): ContratoCredito
+}
+class Endereco {
+  - logradouro: String
+  - numero: String
+  - cidade: String
+  - estado: String
+  - cep: String
+}
+class EntidadeEmpregadora {
+  - nome: String
+  - cnpj: String
+}
+class VinculoEmpregaticio {
+  - rendimento: double
+}
+class Pedido {
+  - id: int
+  - dataCriacao: Date
+  - status: StatusPedido
+  - modalidade: Modalidade
+  + criar(): void
+  + alterar(): void
+  + cancelar(): void
+  + consultar(): void
+  + estaAvaliado(): boolean
+}
+class Parecer {
+  - id: int
+  - tipo: TipoParecer
+  - justificativa: String
+  - data: Date
+}
+class Automovel {
+  - placa: String
+  - ano: int
+  - marca: String
+  - modelo: String
+}
+abstract class Contrato {
+  - id: int
+  - dataInicio: Date
+  - dataFim: Date
+  - valor: double
+}
+class Locacao {
+  - prazoDias: int
+  - dataDevolucao: Date
+}
+class Assinatura {
+  - valorMensalidade: double
+  - periodicidade: String
+}
+class Leasing {
+  - duracaoMeses: int
+}
+class ContratoCredito {
+  - id: int
+  - valor: double
+  - taxaJuros: double
+  - prazoMeses: int
+}
+enum StatusPedido {
+  EM_ELABORACAO
+  EM_ANALISE
+  APROVADO
+  REPROVADO
+  CONFIRMADO
+  CANCELADO
+}
+enum TipoParecer {
+  POSITIVO
+  NEGATIVO
+}
+enum Modalidade {
+  LOCACAO
+  ASSINATURA
+  LEASING
+}
+
+Usuario <|-- Cliente
+Usuario <|-- Agente
+Agente  <|-- Empresa
+Agente  <|-- Banco
+Contrato <|-- Locacao
+Contrato <|-- Assinatura
+Contrato <|-- Leasing
+
+Cliente "1" -- "1"    Endereco   : reside em >
+Cliente "1" -- "0..*" Pedido     : realiza >
+Agente  "1" -- "0..*" Parecer    : emite >
+Pedido  "1" -- "0..1" Parecer    : recebe >
+Pedido  "0..*" -- "1" Automovel  : refere-se a >
+Pedido  "1" -- "0..1" Contrato   : origina >
+Automovel "0..*" -- "0..1" Usuario : é propriedade de >
+Leasing "1" -- "1"    ContratoCredito : possui >
+Banco   "1" -- "0..*" ContratoCredito : concede >
+
+Cliente "1" -- "0..3" EntidadeEmpregadora
+(Cliente, EntidadeEmpregadora) .. VinculoEmpregaticio
+
+@enduml
