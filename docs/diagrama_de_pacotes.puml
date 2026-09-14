@@ -1,0 +1,40 @@
+@startuml Diagrama_de_Pacotes
+skinparam packageStyle rectangle
+skinparam linetype ortho
+title Sistema de Aluguel de Carros - Diagrama de Pacotes (Visão Lógica)
+
+package "Sistema de Aluguel de Carros" {
+
+  package "Subsistema Web\n" as Web {
+    package "Views / Templates"   as Views
+    package "Controladores Web"   as Controllers
+  }
+
+  package "Subsistema de Gestão\n(Pedidos e Contratos)" as Gestao {
+    package "Serviços de aplicação" as App {
+      package "Gestão de cadastro"     as SCadastro
+      package "Gestão de pedidos"      as SPedidos
+      package "Avaliação de pedidos"   as SAvaliacao
+      package "Gestão de contratos"    as SContratos
+    }
+    package "Domínio (Modelo)" as Dominio {
+      package "Usuários"    as Usuarios
+      package "Pedidos"     as Pedidos
+      package "Contratos"   as Contratos
+      package "Automóveis"  as Automoveis
+    }
+  }
+
+  package "Infraestrutura" as Infra {
+    package "Persistência (Repositórios)" as Persist
+    package "Autenticação / Segurança"    as Seguranca
+  }
+}
+
+Views       ..>  Controllers
+Controllers ..>  App        : usa
+App         ..>  Dominio    : manipula
+App         ..>  Seguranca  : autentica
+App         ..>  Persist    : consulta / grava
+Persist     ..>  Dominio    : persiste
+@enduml
