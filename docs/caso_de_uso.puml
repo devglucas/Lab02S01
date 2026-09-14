@@ -1,0 +1,55 @@
+@startuml Diagrama_de_Casos_de_Uso
+left to right direction
+skinparam packageStyle rectangle
+title Sistema de Aluguel de Carros
+
+actor "Cliente"  as Cliente
+actor "Agente"   as Agente
+actor "Empresa"  as Empresa
+actor "Banco"    as Banco
+
+Agente <|-- Empresa
+Agente <|-- Banco
+
+rectangle "Sistema de Aluguel de Carros" {
+  usecase "Realizar cadastro"              as UC_Cad
+  usecase "Autenticar-se"                  as UC_Login
+  usecase "Criar pedido de aluguel"        as UC_Criar
+  usecase "Consultar pedido"               as UC_Consultar
+  usecase "Alterar pedido"                 as UC_Alterar
+  usecase "Cancelar pedido"                as UC_Cancelar
+  usecase "Decidir sobre pedido aprovado"  as UC_Decidir
+  usecase "Avaliar pedido"                 as UC_Avaliar
+  usecase "Analisar financeiramente"       as UC_Analisar
+  usecase "Registrar parecer"              as UC_Parecer
+  usecase "Efetivar contrato de aluguel"   as UC_Contrato
+  usecase "Conceder contrato de crédito"   as UC_Credito
+}
+
+Cliente --> UC_Cad
+Cliente --> UC_Criar
+Cliente --> UC_Consultar
+Cliente --> UC_Alterar
+Cliente --> UC_Cancelar
+Cliente --> UC_Decidir
+
+Agente --> UC_Cad
+Agente --> UC_Consultar
+Agente --> UC_Avaliar
+
+Banco --> UC_Credito
+
+UC_Criar      ..> UC_Login : «include»
+UC_Consultar  ..> UC_Login : «include»
+UC_Alterar    ..> UC_Login : «include»
+UC_Cancelar   ..> UC_Login : «include»
+UC_Decidir    ..> UC_Login : «include»
+UC_Avaliar    ..> UC_Login : «include»
+
+UC_Avaliar ..> UC_Analisar : «include»
+UC_Avaliar ..> UC_Parecer  : «include»
+
+UC_Contrato ..> UC_Decidir  : «extend»
+UC_Credito  ..> UC_Contrato : «extend»
+
+@enduml
