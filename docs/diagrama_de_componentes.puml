@@ -1,0 +1,69 @@
+@startuml Diagrama_de_Componentes
+skinparam componentStyle uml2
+skinparam nodesep 20
+skinparam ranksep 60
+left to right direction
+title Sistema de Aluguel de Carros - Diagrama de Componentes
+
+component "Navegador do Cliente" as Browser
+component "Sistema do Agente\n(Empresa / Banco)" as AgenteSys
+
+node "Servidor Central" {
+  package "Subsistema Web\n(Construção Dinâmica de Páginas)" {
+    component "Construtor de\npáginas web" as Web
+  }
+  package "Subsistema de gestão de pedidos e contratos" {
+    component "Autenticação\ne cadastro" as Auth
+    component "Gestão de\npedidos"      as Pedidos
+    component "Avaliação de\npedidos"   as Avaliacao
+    component "Gestão de\ncontratos"    as Contratos
+    component "Integração\nbancária"    as IntBanco
+  }
+  package "Persistência" {
+    component "Repositório\nde dados" as Repo
+    database  "Banco de dados"        as DB
+  }
+}
+
+interface "IWeb (HTTP)"      as IWeb
+interface "IAutenticacao"    as IAuth
+interface "ICadastro"        as ICad
+interface "IPedidos"         as IPed
+interface "IAvaliacao"       as IAval
+interface "IContratos"       as ICon
+interface "ICredito"         as ICre
+interface "IPersistencia"    as IPer
+interface "ISistemaBancario" as IBank
+
+IWeb      -    Web
+Browser   ..>  IWeb : HTTP / Internet
+AgenteSys ..>  IWeb : HTTP / Internet
+
+IAuth - Auth
+ICad  - Auth
+IPed  - Pedidos
+IAval - Avaliacao
+ICon  - Contratos
+Web ..>  IAuth
+Web ..>  ICad
+Web ..>  IPed
+Web ..>  IAval
+Web ..>  ICon
+
+Pedidos   ..> IAuth
+Avaliacao ..> IAuth
+Contratos ..> IAuth
+
+IPer - Repo
+Auth      ..> IPer
+Pedidos   ..> IPer
+Avaliacao ..> IPer
+Contratos ..> IPer
+Repo --> DB : JDBC
+
+ICre      -   IntBanco
+IBank     -   AgenteSys
+Contratos ..> ICre  : leasing
+IntBanco  ..> IBank : concede credito
+
+@enduml
