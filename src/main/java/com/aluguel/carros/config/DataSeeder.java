@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Popula alguns clientes de exemplo no perfil de desenvolvimento (H2),
- * para facilitar o teste do CRUD pelo navegador.
+ * Popula alguns clientes de exemplo (dev/H2 ou prod/MySQL) para facilitar o
+ * teste do CRUD pelo navegador. Só insere quando o banco está vazio.
  */
 @Component
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class DataSeeder implements CommandLineRunner {
 
     private final ClienteRepository repository;
