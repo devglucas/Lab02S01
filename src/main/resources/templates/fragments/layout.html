@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="pagina(titulo, conteudo)" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} + ' | Aluguel de Carros'">Aluguel de Carros</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topo">
+    <div class="container topo-conteudo">
+        <a th:href="@{/clientes}" class="marca">🚗 Aluguel de Carros</a>
+        <nav>
+            <a th:href="@{/clientes}">Clientes</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <!-- Mensagens de feedback -->
+    <div th:if="${mensagemSucesso}" class="alerta alerta-sucesso" th:text="${mensagemSucesso}"></div>
+    <div th:if="${mensagemErro}" class="alerta alerta-erro" th:text="${mensagemErro}"></div>
+
+    <div th:replace="${conteudo}">Conteúdo</div>
+</main>
+
+<footer class="rodape">
+    <div class="container">
+        Sistema de Aluguel de Carros — Entrega: CRUD de Cliente (Lab02)
+    </div>
+</footer>
+</body>
+</html>

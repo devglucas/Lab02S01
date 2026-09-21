@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<body>
+<th:block th:replace="~{fragments/layout :: pagina('Detalhe do cliente', ~{::conteudo})}">
+    <div th:fragment="conteudo" th:remove="tag">
+
+        <div class="cabecalho-secao">
+            <h1 th:text="'Cliente: ' + ${cliente.nome}">Cliente</h1>
+            <div class="acoes">
+                <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-primario">Editar</a>
+                <a th:href="@{/clientes}" class="btn">Voltar</a>
+            </div>
+        </div>
+
+        <section class="cartao">
+            <h2>Dados pessoais</h2>
+            <dl class="descricao">
+                <dt>Nome</dt><dd th:text="${cliente.nome}"></dd>
+                <dt>CPF</dt><dd th:text="${cliente.cpf}"></dd>
+                <dt>RG</dt><dd th:text="${cliente.rg}"></dd>
+                <dt>Profissão</dt><dd th:text="${cliente.profissao}"></dd>
+                <dt>E-mail</dt><dd th:text="${cliente.email}"></dd>
+            </dl>
+        </section>
+
+        <section class="cartao" th:if="${cliente.endereco != null}">
+            <h2>Endereço</h2>
+            <dl class="descricao">
+                <dt>Logradouro</dt><dd th:text="${cliente.endereco.logradouro + ', ' + cliente.endereco.numero}"></dd>
+                <dt>Cidade/UF</dt><dd th:text="${cliente.endereco.cidade + '/' + cliente.endereco.estado}"></dd>
+                <dt>CEP</dt><dd th:text="${cliente.endereco.cep}"></dd>
+            </dl>
+        </section>
+
+        <section class="cartao">
+            <h2>Entidades empregadoras
+                <small th:text="'(' + ${cliente.vinculos.size()} + ' de 3)'">(0 de 3)</small>
+            </h2>
+            <p th:if="${cliente.vinculos.isEmpty()}" class="vazio">Nenhum vínculo empregatício informado.</p>
+            <table th:unless="${cliente.vinculos.isEmpty()}" class="tabela">
+                <thead>
+                <tr>
+                    <th>Entidade</th>
+                    <th>CNPJ</th>
+                    <th>Rendimento (R$)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="v : ${cliente.vinculos}">
+                    <td th:text="${v.entidadeEmpregadora.nome}">Empresa</td>
+                    <td th:text="${v.entidadeEmpregadora.cnpj}">CNPJ</td>
+                    <td th:text="${#numbers.formatDecimal(v.rendimento, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+</th:block>
+</body>
+</html>
