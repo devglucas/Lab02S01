@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<body>
+<th:block th:replace="~{fragments/layout :: pagina('Clientes', ~{::conteudo})}">
+    <div th:fragment="conteudo" th:remove="tag">
+
+        <div class="cabecalho-secao">
+            <h1>Clientes</h1>
+            <a th:href="@{/clientes/novo}" class="btn btn-primario">+ Novo cliente</a>
+        </div>
+
+        <p th:if="${clientes.isEmpty()}" class="vazio">
+            Nenhum cliente cadastrado ainda.
+        </p>
+
+        <table th:unless="${clientes.isEmpty()}" class="tabela">
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>E-mail</th>
+                <th>Profissão</th>
+                <th>Cidade/UF</th>
+                <th class="acoes-col">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${clientes}">
+                <td th:text="${c.nome}">Nome</td>
+                <td th:text="${c.cpf}">000.000.000-00</td>
+                <td th:text="${c.email}">email</td>
+                <td th:text="${c.profissao}">Profissão</td>
+                <td th:text="${c.endereco != null} ? ${c.endereco.cidade + '/' + c.endereco.estado} : '-'">Cidade/UF</td>
+                <td class="acoes">
+                    <a th:href="@{/clientes/{id}(id=${c.id})}" class="btn btn-mini">Detalhar</a>
+                    <a th:href="@{/clientes/{id}/editar(id=${c.id})}" class="btn btn-mini">Editar</a>
+                    <form th:action="@{/clientes/{id}/excluir(id=${c.id})}" method="post"
+                          onsubmit="return confirm('Excluir este cliente?');" style="display:inline">
+                        <button type="submit" class="btn btn-mini btn-perigo">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</th:block>
+</body>
+</html>

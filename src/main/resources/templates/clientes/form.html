@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<body>
+<th:block th:replace="~{fragments/layout :: pagina('Cliente', ~{::conteudo})}">
+    <div th:fragment="conteudo" th:remove="tag">
+
+        <div class="cabecalho-secao">
+            <h1 th:text="${modoEdicao} ? 'Editar cliente' : 'Novo cliente'">Cliente</h1>
+            <a th:href="@{/clientes}" class="btn">Voltar</a>
+        </div>
+
+        <!-- Resumo de erros de validação -->
+        <div th:if="${#fields.hasErrors('${clienteForm.*}')}" class="alerta alerta-erro">
+            Corrija os campos destacados abaixo.
+        </div>
+
+        <form th:action="@{/clientes}" th:object="${clienteForm}" method="post" class="formulario">
+            <input type="hidden" th:field="*{id}"/>
+
+            <fieldset>
+                <legend>Dados de acesso</legend>
+                <div class="linha">
+                    <div class="campo">
+                        <label>E-mail</label>
+                        <input type="email" th:field="*{email}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                    </div>
+                    <div class="campo">
+                        <label>Senha</label>
+                        <input type="password" th:field="*{senha}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Dados pessoais</legend>
+                <div class="linha">
+                    <div class="campo">
+                        <label>Nome</label>
+                        <input type="text" th:field="*{nome}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+                    </div>
+                    <div class="campo">
+                        <label>Profissão</label>
+                        <input type="text" th:field="*{profissao}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('profissao')}" th:errors="*{profissao}"></span>
+                    </div>
+                </div>
+                <div class="linha">
+                    <div class="campo">
+                        <label>RG</label>
+                        <input type="text" th:field="*{rg}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('rg')}" th:errors="*{rg}"></span>
+                    </div>
+                    <div class="campo">
+                        <label>CPF</label>
+                        <input type="text" th:field="*{cpf}" placeholder="000.000.000-00"/>
+                        <span class="erro" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Endereço</legend>
+                <div class="linha">
+                    <div class="campo campo-largo">
+                        <label>Logradouro</label>
+                        <input type="text" th:field="*{logradouro}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('logradouro')}" th:errors="*{logradouro}"></span>
+                    </div>
+                    <div class="campo campo-estreito">
+                        <label>Número</label>
+                        <input type="text" th:field="*{numero}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></span>
+                    </div>
+                </div>
+                <div class="linha">
+                    <div class="campo">
+                        <label>Cidade</label>
+                        <input type="text" th:field="*{cidade}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}"></span>
+                    </div>
+                    <div class="campo campo-estreito">
+                        <label>UF</label>
+                        <input type="text" maxlength="2" th:field="*{estado}"/>
+                        <span class="erro" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+                    </div>
+                    <div class="campo">
+                        <label>CEP</label>
+                        <input type="text" th:field="*{cep}" placeholder="00000-000"/>
+                        <span class="erro" th:if="${#fields.hasErrors('cep')}" th:errors="*{cep}"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Entidades empregadoras <small>(até 3)</small></legend>
+                <p class="ajuda">Informe onde o cliente trabalha e o rendimento auferido em cada uma. Máximo de 3.</p>
+
+                <div id="vinculos">
+                    <div class="vinculo" th:each="v, stat : *{vinculos}">
+                        <div class="linha">
+                            <div class="campo">
+                                <label>Entidade empregadora</label>
+                                <input type="text" th:field="*{vinculos[__${stat.index}__].nomeEmpregador}"/>
+                                <span class="erro"
+                                      th:if="${#fields.hasErrors('vinculos[' + stat.index + '].nomeEmpregador')}"
+                                      th:errors="*{vinculos[__${stat.index}__].nomeEmpregador}"></span>
+                            </div>
+                            <div class="campo">
+                                <label>CNPJ</label>
+                                <input type="text" th:field="*{vinculos[__${stat.index}__].cnpj}"/>
+                                <span class="erro"
+                                      th:if="${#fields.hasErrors('vinculos[' + stat.index + '].cnpj')}"
+                                      th:errors="*{vinculos[__${stat.index}__].cnpj}"></span>
+                            </div>
+                            <div class="campo campo-estreito">
+                                <label>Rendimento (R$)</label>
+                                <input type="number" step="0.01" min="0"
+                                       th:field="*{vinculos[__${stat.index}__].rendimento}"/>
+                                <span class="erro"
+                                      th:if="${#fields.hasErrors('vinculos[' + stat.index + '].rendimento')}"
+                                      th:errors="*{vinculos[__${stat.index}__].rendimento}"></span>
+                            </div>
+                            <div class="campo campo-botao">
+                                <button type="button" class="btn btn-mini btn-perigo"
+                                        onclick="removerVinculo(this)">Remover</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="btnAdicionar" class="btn btn-secundario" onclick="adicionarVinculo()">
+                    + Adicionar entidade empregadora
+                </button>
+            </fieldset>
+
+            <div class="acoes-form">
+                <button type="submit" class="btn btn-primario">Salvar</button>
+                <a th:href="@{/clientes}" class="btn">Cancelar</a>
+            </div>
+        </form>
+
+        <!-- Template de nova linha de vínculo (usado pelo JS) -->
+        <template id="tplVinculo">
+            <div class="vinculo">
+                <div class="linha">
+                    <div class="campo">
+                        <label>Entidade empregadora</label>
+                        <input type="text" name="vinculos[__IDX__].nomeEmpregador"/>
+                    </div>
+                    <div class="campo">
+                        <label>CNPJ</label>
+                        <input type="text" name="vinculos[__IDX__].cnpj"/>
+                    </div>
+                    <div class="campo campo-estreito">
+                        <label>Rendimento (R$)</label>
+                        <input type="number" step="0.01" min="0" value="0" name="vinculos[__IDX__].rendimento"/>
+                    </div>
+                    <div class="campo campo-botao">
+                        <button type="button" class="btn btn-mini btn-perigo" onclick="removerVinculo(this)">Remover</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <script th:inline="javascript">
+            const MAX_VINCULOS = 3;
+
+            function contarVinculos() {
+                return document.querySelectorAll('#vinculos .vinculo').length;
+            }
+
+            function reindexar() {
+                document.querySelectorAll('#vinculos .vinculo').forEach((div, i) => {
+                    div.querySelectorAll('input').forEach(inp => {
+                        if (inp.name) {
+                            inp.name = inp.name.replace(/vinculos\[\d+\]/, 'vinculos[' + i + ']');
+                        }
+                    });
+                });
+                atualizarBotaoAdicionar();
+            }
+
+            function atualizarBotaoAdicionar() {
+                document.getElementById('btnAdicionar').disabled = contarVinculos() >= MAX_VINCULOS;
+            }
+
+            function adicionarVinculo() {
+                if (contarVinculos() >= MAX_VINCULOS) {
+                    alert('Máximo de ' + MAX_VINCULOS + ' entidades empregadoras.');
+                    return;
+                }
+                const idx = contarVinculos();
+                const tpl = document.getElementById('tplVinculo').innerHTML.replaceAll('__IDX__', idx);
+                document.getElementById('vinculos').insertAdjacentHTML('beforeend', tpl);
+                atualizarBotaoAdicionar();
+            }
+
+            function removerVinculo(botao) {
+                botao.closest('.vinculo').remove();
+                reindexar();
+            }
+
+            document.addEventListener('DOMContentLoaded', atualizarBotaoAdicionar);
+        </script>
+
+    </div>
+</th:block>
+</body>
+</html>
