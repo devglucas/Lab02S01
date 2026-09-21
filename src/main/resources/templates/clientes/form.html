@@ -50,12 +50,14 @@
                 <div class="linha">
                     <div class="campo">
                         <label>RG</label>
-                        <input type="text" th:field="*{rg}"/>
+                        <input type="text" th:field="*{rg}" maxlength="12"
+                               inputmode="text" placeholder="00.000.000-0"/>
                         <span class="erro" th:if="${#fields.hasErrors('rg')}" th:errors="*{rg}"></span>
                     </div>
                     <div class="campo">
                         <label>CPF</label>
-                        <input type="text" th:field="*{cpf}" placeholder="000.000.000-00"/>
+                        <input type="text" th:field="*{cpf}" maxlength="14"
+                               inputmode="numeric" placeholder="000.000.000-00"/>
                         <span class="erro" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></span>
                     </div>
                 </div>
@@ -88,7 +90,8 @@
                     </div>
                     <div class="campo">
                         <label>CEP</label>
-                        <input type="text" th:field="*{cep}" placeholder="00000-000"/>
+                        <input type="text" th:field="*{cep}" maxlength="9"
+                               inputmode="numeric" placeholder="00000-000"/>
                         <span class="erro" th:if="${#fields.hasErrors('cep')}" th:errors="*{cep}"></span>
                     </div>
                 </div>
@@ -203,7 +206,50 @@
                 reindexar();
             }
 
-            document.addEventListener('DOMContentLoaded', atualizarBotaoAdicionar);
+            // ----- Máscaras de CPF, RG e CEP (formatação automática) -----
+
+            function mascaraCPF(valor) {
+                const d = valor.replace(/\D/g, '').slice(0, 11);
+                let out = '';
+                for (let i = 0; i < d.length; i++) {
+                    if (i === 3 || i === 6) out += '.';
+                    if (i === 9) out += '-';
+                    out += d[i];
+                }
+                return out;
+            }
+
+            function mascaraCEP(valor) {
+                const d = valor.replace(/\D/g, '').slice(0, 8);
+                return d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d;
+            }
+
+            function mascaraRG(valor) {
+                // dígitos (e um X opcional no fim), formato 00.000.000-0
+                const s = valor.replace(/[^\dxX]/g, '').toUpperCase().slice(0, 9);
+                let out = '';
+                for (let i = 0; i < s.length; i++) {
+                    if (i === 2 || i === 5) out += '.';
+                    if (i === 8) out += '-';
+                    out += s[i];
+                }
+                return out;
+            }
+
+            function aplicarMascara(id, fn) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const formatar = () => { el.value = fn(el.value); };
+                el.addEventListener('input', formatar);
+                formatar(); // formata o valor já existente (ex.: na edição)
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                atualizarBotaoAdicionar();
+                aplicarMascara('cpf', mascaraCPF);
+                aplicarMascara('cep', mascaraCEP);
+                aplicarMascara('rg', mascaraRG);
+            });
         </script>
 
     </div>

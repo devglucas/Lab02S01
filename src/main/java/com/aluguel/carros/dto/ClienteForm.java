@@ -7,6 +7,7 @@ import com.aluguel.carros.domain.VinculoEmpregaticio;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -34,9 +35,13 @@ public class ClienteForm {
     private String nome;
 
     @NotBlank(message = "Informe o RG")
+    @Pattern(regexp = "\\d{2}\\.\\d{3}\\.\\d{3}(-[\\dxX])?",
+            message = "RG deve estar no formato 00.000.000-0")
     private String rg;
 
     @NotBlank(message = "Informe o CPF")
+    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}",
+            message = "CPF deve estar no formato 000.000.000-00")
     private String cpf;
 
     @NotBlank(message = "Informe a profissão")
@@ -57,6 +62,7 @@ public class ClienteForm {
     private String estado;
 
     @NotBlank(message = "Informe o CEP")
+    @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP deve estar no formato 00000-000")
     private String cep;
 
     // ----- Vínculos empregatícios (0..3) -----
